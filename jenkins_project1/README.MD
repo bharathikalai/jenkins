@@ -26,10 +26,14 @@ sudo systemctl restart docker
 
 ###How to create a new pipleine in jenkins
 
-![alt text](image-4.png)   ##Click new item
+##Click new item
+![alt text](image-4.png)   
 
-![alt text](image-5.png)  ##Enter the pipeline name and select pipeline
+##Enter the pipeline name and select pipeline
+![alt text](image-5.png)  
 
-![alt text](image-6.png)  ##Configure your git repo link and file path
+##Configure your git repo link and file path
+![alt text](image-6.png)  
 
-![alt text](image-7.png)  ##Once you complete then run this build
+##Once you complete then run this build
+![alt text](image-7.png)  
