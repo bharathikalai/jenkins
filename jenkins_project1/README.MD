@@ -14,20 +14,22 @@ sudo systemctl restart jenkins
 
 sudo systemctl restart docker
 
-![alt text](image.png)    click manage jenkins
+###How to build jenkins pipeline
 
-![alt text](image-1.png)  click plugins
+![alt text](image.png)    ##Click manage jenkins
 
-![alt text](image-2.png)  click available plugin
+![alt text](image-1.png)  ##Click plugins
 
-![alt text](image-3.png)  search docker pipeline and install 
+![alt text](image-2.png)  ##Click available plugin
 
-how to create a new pipleine in jenkins
+![alt text](image-3.png)  ##Search docker pipeline and install 
 
-![alt text](image-4.png)   click new item
+###How to create a new pipleine in jenkins
 
-![alt text](image-5.png)  enter the pipeline name and select pipeline
+![alt text](image-4.png)   ##Click new item
 
-![alt text](image-6.png)  configure your git repo link and file path
+![alt text](image-5.png)  ##Enter the pipeline name and select pipeline
 
-![alt text](image-7.png)  once you complete then run this build
+![alt text](image-6.png)  ##Configure your git repo link and file path
+
+![alt text](image-7.png)  ##Once you complete then run this build
