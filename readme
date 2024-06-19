@@ -1,5 +1,7 @@
 jenkins   basic to advance 
 
+please verify this jenkins offical link : https://www.jenkins.io/doc/book/installing/linux/#debianubuntu
+
 installation steps: 
 
 #step 1 sudo apt update
@@ -20,4 +22,6 @@ sudo apt-get install jenkins
 
 after installation
 
-step 5 :  sudo cat /var/lib/jenkins/secrets/initialAdminPassword
+step 5 : sudo apt install docker.io
+
+step 6 :  sudo cat /var/lib/jenkins/secrets/initialAdminPassword
