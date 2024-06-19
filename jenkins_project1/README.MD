@@ -6,12 +6,12 @@
 sudo apt install docker.io
 
 # step 2
-give the docker permission to jenkins user 
+Give the docker permission to jenkins user 
 
 sudo usermod -aG docker jenkins
 
 # step 3
-restart the jenkins and docker aswell
+Restart the jenkins and docker aswell
 
 sudo systemctl restart jenkins
 
