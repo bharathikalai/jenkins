@@ -40,7 +40,10 @@ sudo systemctl restart docker
 ![alt text](image-5.png)  
 
 ## Configure your git repo link and file path
-![alt text](image-6.png)  
+![alt text](image-8.png)
+
+## Script path and branch main  & save
+![alt text](image-9.png)
 
 ## Once you complete then run this build
 ![alt text](image-7.png)  
