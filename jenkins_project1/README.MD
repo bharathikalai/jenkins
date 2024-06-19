@@ -1,39 +1,46 @@
-A simple jenkins pipeline to verify if the docker slave configuration is working as expected.
+#### A simple jenkins pipeline to verify if the docker slave configuration is working as expected.
 
-install docker:
+## install docker:
 
+# step1
 sudo apt install docker.io
 
+# step 2
 give the docker permission to jenkins user 
 
 sudo usermod -aG docker jenkins
 
+# step 3
 restart the jenkins and docker aswell
 
 sudo systemctl restart jenkins
 
 sudo systemctl restart docker
 
-###How to build jenkins pipeline
+### How to build jenkins pipeline
 
-![alt text](image.png)    ##Click manage jenkins
+## Click manage jenkins
+![alt text](image.png)    
 
-![alt text](image-1.png)  ##Click plugins
+## Click plugins
+![alt text](image-1.png)  
 
-![alt text](image-2.png)  ##Click available plugin
+## Click available plugin
+![alt text](image-2.png)  
 
-![alt text](image-3.png)  ##Search docker pipeline and install 
+## Search docker pipeline and install 
+![alt text](image-3.png)  
 
-###How to create a new pipleine in jenkins
+### How to create a new pipleine in jenkins
 
-##Click new item
+## Click new item
 ![alt text](image-4.png)   
 
-##Enter the pipeline name and select pipeline
+## Enter the pipeline name and select pipeline
 ![alt text](image-5.png)  
 
-##Configure your git repo link and file path
+## Configure your git repo link and file path
 ![alt text](image-6.png)  
 
-##Once you complete then run this build
+## Once you complete then run this build
 ![alt text](image-7.png)  
