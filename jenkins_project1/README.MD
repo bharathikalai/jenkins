@@ -17,7 +17,7 @@ sudo systemctl restart jenkins
 
 sudo systemctl restart docker
 
-### How to build jenkins pipeline
+### How to build jenkins pipeline ###
 
 ## Click manage jenkins
 ![alt text](image.png)    
