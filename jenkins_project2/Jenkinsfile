@@ -1,28 +1,62 @@
 pipeline {
-    agent any
-    
-    stages {
-        stage('System Info') {
-            steps {
-                sh 'echo "Running uname command..."'
-                sh 'uname -a'
-            }
-        }
-        
-        stage('Process Monitoring') {
-            steps {
-                sh 'echo "Running top command..."'
-                sh 'top -n 1 -b'
-            }
+    agent {
+        docker {
+            image 'node:14' // Use the official Node.js Docker image
+            args '-v /var/run/docker.sock:/var/run/docker.sock' // Mount Docker socket to use Docker commands
         }
     }
-    
-    post {
-        success {
-            echo 'Pipeline succeeded!'
+
+    environment {
+        DOTENV = '.env'
+    }
+
+    stages {
+        stage('Load Environment Variables') {
+            steps {
+                script {
+                    def envVars = readProperties file: '.env'
+                    envVars.each { key, value -> 
+                        env[key] = value
+                    }
+                }
+            }
         }
-        failure {
-            echo 'Pipeline failed!'
+        stage('Checkout') {
+            steps {
+                // Checkout the code from the repository
+                checkout scm
+            }
+        }
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    // Build Docker image
+                    sh 'docker build -t $DOCKER_IMAGE .'
+                }
+            }
+        }
+        stage('Push Docker Image') {
+            steps {
+                script {
+                    // Login to Docker Hub and push the image
+                    sh '''
+                    echo $DOCKER_HUB_PASSWORD | docker login -u $DOCKER_HUB_USERNAME --password-stdin
+                    docker push $DOCKER_IMAGE
+                    '''
+                }
+            }
+        }
+        stage('Deploy to Local Machine') {
+            steps {
+                script {
+                    // Deploy the Docker container on the local machine
+                    sh '''
+                    docker pull $DOCKER_IMAGE
+                    docker stop $(docker ps -q --filter ancestor=$DOCKER_IMAGE) || true
+                    docker run -d -p 80:3000 $DOCKER_IMAGE
+                    '''
+                }
+            }
         }
     }
 }
