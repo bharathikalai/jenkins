@@ -11,6 +11,8 @@ pipeline {
         stage('Checkout') {
             steps {
                 checkout scm // This will check out your repository into Jenkins workspace
+                sh 'ls -la' 
+                sh 'pwd'
             }
         }
 
