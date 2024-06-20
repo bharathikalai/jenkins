@@ -1,0 +1,17 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Show Secret') {
+            steps {
+                script {
+                    // Access the secret text using the credentials ID
+                    withCredentials([string(credentialsId: 'DOCKER_HUB_PASSWORD', variable: 'SECRET_TEXT')]) {
+                        // Print the secret text to the pipeline output
+                        echo "The secret text is: ${SECRET_TEXT}"
+                    }
+                }
+            }
+        }
+    }
+}
