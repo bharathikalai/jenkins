@@ -24,12 +24,14 @@ pipeline {
                     withCredentials([
                         string(credentialsId: 'DOCKER_HUB_USERNAME', variable: 'DOCKER_HUB_USERNAME'),
                         string(credentialsId: 'DOCKER_HUB_PASSWORD', variable: 'DOCKER_HUB_PASSWORD'),
-                        string(credentialsId: 'DOCKER_IMAGE', variable: 'DOCKER_IMAGE')
+                        string(credentialsId: 'DOCKER_IMAGE', variable: 'DOCKER_IMAGE'),
+                        string(credentialsId: 'MY_SECRET_TEXT', variable: 'MY_SECRET_TEXT') // Load the secret text
                     ]) {
                         // Explicitly set them as environment variables
                         env.DOCKER_HUB_USERNAME = DOCKER_HUB_USERNAME
                         env.DOCKER_HUB_PASSWORD = DOCKER_HUB_PASSWORD
                         env.DOCKER_IMAGE = DOCKER_IMAGE
+                        env.MY_SECRET_TEXT = MY_SECRET_TEXT // Set the secret text as an environment variable
                     }
                 }
             }
@@ -37,7 +39,7 @@ pipeline {
         stage('Check Environment Variables') {
             steps {
                 script {
-                    // Print the environment variables
+                    // Print the environment variables from the .env file
                     echo "Environment Variables from .env file:"
                     def envVars = readProperties file: env.DOTENV
                     envVars.each { key, value ->
@@ -47,6 +49,7 @@ pipeline {
                     echo "Environment Variables from Jenkins Credentials:"
                     echo "DOCKER_HUB_USERNAME = ${env.DOCKER_HUB_USERNAME}"
                     echo "DOCKER_IMAGE = ${env.DOCKER_IMAGE}"
+                    echo "MY_SECRET_TEXT = ${env.MY_SECRET_TEXT}" // Print the secret text
                     // Avoid printing sensitive information like passwords
                     // echo "DOCKER_HUB_PASSWORD = ${env.DOCKER_HUB_PASSWORD}"
                 }
