@@ -1,8 +1,8 @@
 pipeline {
     agent {
         docker {
-            image 'node:14' // Use the official Node.js Docker image
-            args '-v /var/run/docker.sock:/var/run/docker.sock' // Mount Docker socket to use Docker commands
+            image 'node:14'
+            args '-v /var/run/docker.sock:/var/run/docker.sock'
         }
     }
 
@@ -14,24 +14,28 @@ pipeline {
         stage('Load Environment Variables') {
             steps {
                 script {
-                    // Load environment variables from .env file
-                    def envVars = readProperties file: env.DOTENV
-                    envVars.each { key, value -> 
-                        env[key] = value
-                    }
+                    try {
+                        // Load environment variables from .env file
+                        def envVars = readProperties file: env.DOTENV
+                        envVars.each { key, value -> 
+                            env[key] = value
+                        }
 
-                    // Load credentials from Jenkins
-                    withCredentials([
-                        string(credentialsId: 'DOCKER_HUB_USERNAME', variable: 'DOCKER_HUB_USERNAME'),
-                        string(credentialsId: 'DOCKER_HUB_PASSWORD', variable: 'DOCKER_HUB_PASSWORD'),
-                        string(credentialsId: 'DOCKER_IMAGE', variable: 'DOCKER_IMAGE'),
-                        string(credentialsId: 'MY_SECRET_TEXT', variable: 'MY_SECRET_TEXT') // Load the secret text
-                    ]) {
-                        // Explicitly set them as environment variables
-                        env.DOCKER_HUB_USERNAME = DOCKER_HUB_USERNAME
-                        env.DOCKER_HUB_PASSWORD = DOCKER_HUB_PASSWORD
-                        env.DOCKER_IMAGE = DOCKER_IMAGE
-                        env.MY_SECRET_TEXT = MY_SECRET_TEXT // Set the secret text as an environment variable
+                        // Load credentials from Jenkins
+                        withCredentials([
+                            string(credentialsId: 'DOCKER_HUB_USERNAME', variable: 'DOCKER_HUB_USERNAME'),
+                            string(credentialsId: 'DOCKER_HUB_PASSWORD', variable: 'DOCKER_HUB_PASSWORD'),
+                            string(credentialsId: 'DOCKER_IMAGE', variable: 'DOCKER_IMAGE'),
+                            string(credentialsId: 'MY_SECRET_TEXT', variable: 'MY_SECRET_TEXT')
+                        ]) {
+                            env.DOCKER_HUB_USERNAME = DOCKER_HUB_USERNAME
+                            env.DOCKER_HUB_PASSWORD = DOCKER_HUB_PASSWORD
+                            env.DOCKER_IMAGE = DOCKER_IMAGE
+                            env.MY_SECRET_TEXT = MY_SECRET_TEXT
+                        }
+                    } catch (Exception e) {
+                        echo "Error loading environment variables or credentials: ${e.message}"
+                        throw e
                     }
                 }
             }
@@ -39,56 +43,72 @@ pipeline {
         stage('Check Environment Variables') {
             steps {
                 script {
-                    // Print the environment variables from the .env file
-                    echo "Environment Variables from .env file:"
-                    def envVars = readProperties file: env.DOTENV
-                    envVars.each { key, value ->
-                        echo "${key} = ${env[key]}"
-                    }
+                    try {
+                        // Print the environment variables
+                        echo "Environment Variables from .env file:"
+                        def envVars = readProperties file: env.DOTENV
+                        envVars.each { key, value ->
+                            echo "${key} = ${env[key]}"
+                        }
 
-                    echo "Environment Variables from Jenkins Credentials:"
-                    echo "DOCKER_HUB_USERNAME = ${env.DOCKER_HUB_USERNAME}"
-                    echo "DOCKER_IMAGE = ${env.DOCKER_IMAGE}"
-                    echo "MY_SECRET_TEXT = ${env.MY_SECRET_TEXT}" // Print the secret text
-                    // Avoid printing sensitive information like passwords
-                    // echo "DOCKER_HUB_PASSWORD = ${env.DOCKER_HUB_PASSWORD}"
+                        echo "Environment Variables from Jenkins Credentials:"
+                        echo "DOCKER_HUB_USERNAME = ${env.DOCKER_HUB_USERNAME}"
+                        echo "DOCKER_IMAGE = ${env.DOCKER_IMAGE}"
+                        echo "MY_SECRET_TEXT = ${env.MY_SECRET_TEXT}"
+                        // Avoid printing sensitive information like passwords
+                        // echo "DOCKER_HUB_PASSWORD = ${env.DOCKER_HUB_PASSWORD}"
+                    } catch (Exception e) {
+                        echo "Error checking environment variables: ${e.message}"
+                        throw e
+                    }
                 }
             }
         }
         stage('Checkout') {
             steps {
-                // Checkout the code from the repository
                 checkout scm
             }
         }
         stage('Build Docker Image') {
             steps {
                 script {
-                    // Build Docker image
-                    sh 'docker build -t $DOCKER_IMAGE .'
+                    try {
+                        sh 'docker build -t $DOCKER_IMAGE .'
+                    } catch (Exception e) {
+                        echo "Error building Docker image: ${e.message}"
+                        throw e
+                    }
                 }
             }
         }
         stage('Push Docker Image') {
             steps {
                 script {
-                    // Login to Docker Hub and push the image
-                    sh '''
-                    echo $DOCKER_HUB_PASSWORD | docker login -u $DOCKER_HUB_USERNAME --password-stdin
-                    docker push $DOCKER_IMAGE
-                    '''
+                    try {
+                        sh '''
+                        echo $DOCKER_HUB_PASSWORD | docker login -u $DOCKER_HUB_USERNAME --password-stdin
+                        docker push $DOCKER_IMAGE
+                        '''
+                    } catch (Exception e) {
+                        echo "Error pushing Docker image: ${e.message}"
+                        throw e
+                    }
                 }
             }
         }
         stage('Deploy to Local Machine') {
             steps {
                 script {
-                    // Deploy the Docker container on the local machine
-                    sh '''
-                    docker pull $DOCKER_IMAGE
-                    docker stop $(docker ps -q --filter ancestor=$DOCKER_IMAGE) || true
-                    docker run -d -p 80:3000 $DOCKER_IMAGE
-                    '''
+                    try {
+                        sh '''
+                        docker pull $DOCKER_IMAGE
+                        docker stop $(docker ps -q --filter ancestor=$DOCKER_IMAGE) || true
+                        docker run -d -p 80:3000 $DOCKER_IMAGE
+                        '''
+                    } catch (Exception e) {
+                        echo "Error deploying Docker container: ${e.message}"
+                        throw e
+                    }
                 }
             }
         }
