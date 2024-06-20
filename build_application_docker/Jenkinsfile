@@ -4,7 +4,7 @@ pipeline {
     environment {
         DOCKERHUB_USERNAME = credentials('docker-hub-credentials').username
         DOCKERHUB_PASSWORD = credentials('docker-hub-credentials').password
-        IMAGE_NAME = "bharathikalai/your-image-name:latest"
+        IMAGE_NAME = "bharathikalai/your-image-name"
     }
     
     stages {
