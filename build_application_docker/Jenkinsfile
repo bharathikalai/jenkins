@@ -7,15 +7,11 @@ pipeline {
         IMAGE_NAME = "bharathikalai/your-image-name:latest"
     }
 
-    stages {
         stage('Checkout') {
-            steps {
-                script {
-                    // Checkout the code from Git repository
-                    git credentialsId: 'git-credentials-id', url: 'https://github.com/your/repo.git'
+                steps {
+                    checkout scm
                 }
             }
-        }
         
         stage('Build Docker Image') {
             steps {
