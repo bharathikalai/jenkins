@@ -20,7 +20,7 @@ pipeline {
             steps {
                 script {
                     // Build Docker image
-                    docker.build("${IMAGE_NAME}","./var/lib/jenkins/workspace/docker/build_application_docker/")
+                    docker.build("${IMAGE_NAME}","/var/lib/jenkins/workspace/docker/build_application_docker")
                 }
             }
         }
