@@ -1,14 +1,12 @@
 pipeline {
     agent any
-    
+
     environment {
-        // Define variables for Docker Hub credentials
-        DOCKERHUB_CREDENTIALS = credentials('docker-hub-credentials')
-        DOCKERHUB_USERNAME = DOCKERHUB_CREDENTIALS.username
-        DOCKERHUB_PASSWORD = DOCKERHUB_CREDENTIALS.password
+        // Define variables for referencing credentials
+        DOCKERHUB_CREDENTIALS_ID = 'docker-hub-credentials'
         IMAGE_NAME = "bharathikalai/your-image-name:latest"
     }
-    
+
     stages {
         stage('Checkout') {
             steps {
@@ -31,8 +29,9 @@ pipeline {
         stage('Push Docker Image') {
             steps {
                 script {
-                    // Authenticate and push Docker image to Docker Hub
-                    docker.withRegistry('', DOCKERHUB_USERNAME, DOCKERHUB_PASSWORD) {
+                    // Authenticate and push Docker image to Docker Hub (or custom registry)
+                    docker.withRegistry('https://hub.docker.com', // Replace with your registry URL if needed
+                                       credentialsId: DOCKERHUB_CREDENTIALS_ID) {
                         docker.image("${IMAGE_NAME}:${env.BUILD_NUMBER}").push()
                     }
                 }
