@@ -2,9 +2,11 @@ pipeline {
     agent any
     
     environment {
-        DOCKERHUB_USERNAME = credentials('docker-hub-credentials').username
-        DOCKERHUB_PASSWORD = credentials('docker-hub-credentials').password
-        IMAGE_NAME = "bharathikalai/your-image-name"
+        // Define variables for Docker Hub credentials
+        DOCKERHUB_CREDENTIALS = credentials('docker-hub-credentials')
+        DOCKERHUB_USERNAME = DOCKERHUB_CREDENTIALS.username
+        DOCKERHUB_PASSWORD = DOCKERHUB_CREDENTIALS.password
+        IMAGE_NAME = "bharathikalai/your-image-name:latest"
     }
     
     stages {
