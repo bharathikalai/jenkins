@@ -2,15 +2,15 @@ pipeline {
     agent any
 
     environment {
-       DOCKERHUB_CREDENTIALS = credentials('docker_hub_credentials_id') 
-       IMAGE_NAME = 'bharathikalai/jenkins:latest' // Replace with your image name or another credential if needed
+        DOCKER_CREDENTIALS_ID = credentials('dockerhub-credentials') // Credential ID for DockerHub username and password
+        IMAGE_NAME = 'bharathikalai/jenkins:latest' // Replace with your image name
     }
 
     stages {
         stage('Checkout') {
             steps {
                 checkout scm // This will check out your repository into Jenkins workspace
-                sh 'ls -la' 
+                sh 'ls -la'
                 sh 'pwd'
             }
         }
@@ -27,24 +27,37 @@ pipeline {
         stage('Login to Docker Hub') {
             steps {
                 script {
-                    // Log in to Docker Hub using the credentials
-                    sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
+                    withCredentials([usernamePassword(credentialsId: "${DOCKER_CREDENTIALS_ID}", usernameVariable: 'DOCKERHUB_USR', passwordVariable: 'DOCKERHUB_PSW')]) {
+                        // Log in to Docker Hub using the credentials
+                        sh 'echo $DOCKERHUB_PSW | docker login -u $DOCKERHUB_USR --password-stdin'
+                    }
                 }
             }
         }
 
         stage('Push Docker Image') {
             steps {
-                sh 'docker push $IMAGE_NAME'
+                script {
+                    withCredentials([usernamePassword(credentialsId: "${DOCKER_CREDENTIALS_ID}", usernameVariable: 'DOCKERHUB_USR', passwordVariable: 'DOCKERHUB_PSW')]) {
+                        // Push Docker image to Docker Hub
+                        docker.withRegistry('https://index.docker.io/v2/', "${DOCKER_CREDENTIALS_ID}") {
+                            docker.image("${IMAGE_NAME}").push()
+                        }
+                    }
                 }
             }
+        }
     }
 
     post {
         always {
             // Clean up Docker images after build
             script {
-                docker.image("${IMAGE_NAME}").remove()
+                try {
+                    docker.image("${IMAGE_NAME}").remove()
+                } catch (Exception e) {
+                    echo "Error during cleanup: ${e}"
+                }
             }
         }
     }
