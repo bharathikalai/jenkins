@@ -47,7 +47,6 @@ pipeline {
                     try {
                         sh '''
                         docker pull $IMAGE_NAME
-                        docker stop $(docker ps -q --filter ancestor=$IMAGE_NAME') || true
                         docker run -d -p 80:3000 $IMAGE_NAME'
                         '''
                     } catch (Exception e) {
