@@ -37,9 +37,8 @@ pipeline {
         }
         stage('Delete the image from local') {
             steps {
-                script {
-                    sh 'docker rmi $IMAGE_NAME'
-                    sh 'echo $IMAGE_NAME'
+                sh 'docker rmi $IMAGE_NAME'
+                sh 'echo $IMAGE_NAME'
             }
         }
     }
