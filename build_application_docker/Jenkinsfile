@@ -5,6 +5,8 @@ pipeline {
         // Define variables for referencing credentials
         DOCKERHUB_CREDENTIALS_ID = 'admin'
         IMAGE_NAME = "bharathikalai/your-image-name:latest"
+        DOCKER_USERNAME = 'DOCKER_USERNAME'
+        DOCKER_PASSWORD = 'DOCKER_PASSWORD'
     }
 
     stages {
