@@ -4,6 +4,7 @@ pipeline {
     environment {
         // Define variables for referencing credentials
         DOCKERHUB_CREDENTIALS_ID = 'docker-hub-credentials'
+        DOCKERHUB_USERNAME = 'your-dockerhub-username'
         IMAGE_NAME = "bharathikalai/your-image-name:latest"
     }
 
