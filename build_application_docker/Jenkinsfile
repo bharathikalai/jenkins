@@ -2,15 +2,16 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_CREDENTIALS_ID = credentials('dockerhub-credentials') // Credential ID for DockerHub username and password
-        IMAGE_NAME = 'bharathikalai/jenkins:latest' // Replace with your image name
+        // Define variables for referencing credentials
+        DOCKERHUB_CREDENTIALS_ID = 'admin'
+        IMAGE_NAME = "bharathikalai/your-image-name:latest"
     }
 
     stages {
         stage('Checkout') {
             steps {
                 checkout scm // This will check out your repository into Jenkins workspace
-                sh 'ls -la'
+                sh 'ls -la' 
                 sh 'pwd'
             }
         }
@@ -19,18 +20,7 @@ pipeline {
             steps {
                 script {
                     // Build Docker image
-                    docker.build("${IMAGE_NAME}", "/var/lib/jenkins/workspace/docker/build_application_docker")
-                }
-            }
-        }
-
-        stage('Login to Docker Hub') {
-            steps {
-                script {
-                    withCredentials([usernamePassword(credentialsId: "${DOCKER_CREDENTIALS_ID}", usernameVariable: 'DOCKERHUB_USR', passwordVariable: 'DOCKERHUB_PSW')]) {
-                        // Log in to Docker Hub using the credentials
-                        sh 'echo $DOCKERHUB_PSW | docker login -u $DOCKERHUB_USR --password-stdin'
-                    }
+                    docker.build("${IMAGE_NAME}","/var/lib/jenkins/workspace/docker/build_application_docker")
                 }
             }
         }
@@ -38,11 +28,12 @@ pipeline {
         stage('Push Docker Image') {
             steps {
                 script {
-                    withCredentials([usernamePassword(credentialsId: "${DOCKER_CREDENTIALS_ID}", usernameVariable: 'DOCKERHUB_USR', passwordVariable: 'DOCKERHUB_PSW')]) {
-                        // Push Docker image to Docker Hub
-                        docker.withRegistry('https://index.docker.io/v2/', "${DOCKER_CREDENTIALS_ID}") {
-                            docker.image("${IMAGE_NAME}").push()
-                        }
+                    // Use Jenkins credentials for Docker Hub login
+                    withCredentials([usernamePassword(credentialsId: dockerHubCredentials, usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                        sh "docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD"
+ 
+                        // Push the image
+                        sh "docker push ${IMAGE_NAME}:latest"
                     }
                 }
             }
@@ -53,11 +44,7 @@ pipeline {
         always {
             // Clean up Docker images after build
             script {
-                try {
-                    docker.image("${IMAGE_NAME}").remove()
-                } catch (Exception e) {
-                    echo "Error during cleanup: ${e}"
-                }
+                docker.image("${IMAGE_NAME}").remove()
             }
         }
     }
