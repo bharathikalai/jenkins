@@ -41,5 +41,21 @@ pipeline {
                 sh 'echo $IMAGE_NAME'
             }
         }
+        stage('Deploy to Local Machine') {
+            steps {
+                script {
+                    try {
+                        sh '''
+                        docker pull $IMAGE_NAME
+                        docker stop $(docker ps -q --filter ancestor=$DOCKER_IMAGE) || true
+                        docker run -d -p 80:3000 $DOCKER_IMAGE
+                        '''
+                    } catch (Exception e) {
+                        echo "Error deploying Docker container: ${e.message}"
+                        throw e
+                    }
+                }
+            }
+        }
     }
 }
