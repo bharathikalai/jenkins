@@ -11,7 +11,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 checkout scm // This will check out your repository into Jenkins workspace
-                sh 'ls -la'
+                sh 'ls -la' 
                 sh 'pwd'
             }
         }
@@ -20,7 +20,7 @@ pipeline {
             steps {
                 script {
                     // Build Docker image
-                    docker.build("${IMAGE_NAME}", "/var/lib/jenkins/workspace/docker/build_application_docker")
+                    docker.build("${IMAGE_NAME}","/var/lib/jenkins/workspace/docker/build_application_docker")
                 }
             }
         }
@@ -28,11 +28,9 @@ pipeline {
         stage('Push Docker Image') {
             steps {
                 script {
-                    withCredentials([usernamePassword(credentialsId: DOCKERHUB_CREDENTIALS_ID, usernameVariable: 'DOCKERHUB_USERNAME', passwordVariable: 'DOCKERHUB_PASSWORD')]) {
-                        sh """
-                        echo $DOCKERHUB_PASSWORD | docker login -u $DOCKERHUB_USERNAME --password-stdin
-                        docker push ${IMAGE_NAME}
-                        """
+                    // Authenticate and push Docker image to Docker Hub (or custom registry)
+                    docker.withRegistry('https://index.docker.io/v1/', DOCKERHUB_CREDENTIALS_ID) {
+                        docker.image("${IMAGE_NAME}").push()
                     }
                 }
             }
