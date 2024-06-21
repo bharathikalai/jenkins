@@ -1,7 +1,5 @@
 pipeline {
-    agent {
-    docker { image 'ubuntu:23.10' }
-  }
+    agent any
 
     environment {
         // Define variables for referencing credentials
