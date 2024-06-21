@@ -35,13 +35,11 @@ pipeline {
                 }
             }
         }
-    }
-
-    post {
-        always {
-            // Clean up Docker images after build
-            script {
-                docker.image("${IMAGE_NAME}").remove()
+        stage('Delete the image from local') {
+            steps {
+                script {
+                    sh 'docker rmi $IMAGE_NAME'
+                    sh 'echo $IMAGE_NAME'
             }
         }
     }
