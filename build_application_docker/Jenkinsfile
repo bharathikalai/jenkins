@@ -2,10 +2,8 @@ pipeline {
     agent any
 
     environment {
-        // Define variables for referencing credentials
-        DOCKERHUB_USR = credentials('dockerhub-username') // Your DockerHub username
-        DOCKERHUB_PSW = credentials('dockerhub-password') // Your DockerHub password
-        IMAGE_NAME = 'bharathikalai/jenkins:latest' // Replace with your image name or another credential if needed
+       DOCKERHUB_CREDENTIALS = credentials('docker_hub_credentials_id') 
+       IMAGE_NAME = 'bharathikalai/jenkins:latest' // Replace with your image name or another credential if needed
     }
 
     stages {
@@ -30,18 +28,14 @@ pipeline {
             steps {
                 script {
                     // Log in to Docker Hub using the credentials
-                    sh 'echo $DOCKERHUB_PSW | docker login -u $DOCKERHUB_USR --password-stdin'
+                    sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
                 }
             }
         }
 
         stage('Push Docker Image') {
             steps {
-                script {
-                    // Push Docker image to Docker Hub
-                    docker.withRegistry('https://index.docker.io/v1/', DOCKERHUB_USR) {
-                        docker.image("${IMAGE_NAME}").push()
-                    }
+                sh docker push $IMAGE_NAME
                 }
             }
         }
