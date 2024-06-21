@@ -17,4 +17,4 @@
 ![alt text](image-2.png)
 
 
-### if you have any doubt please feel free t0 contact me on linkdin  USER NAME : Bharathi Thasan
+### if you have any doubt  feel free t0 contact me on linkdin  USER NAME : Bharathi Thasan
