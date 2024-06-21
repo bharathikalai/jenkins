@@ -1,0 +1,20 @@
+## STEP 1
+
+## CREATE A docker-hub-credentials ID FROM DOCKER HUB
+
+![alt text](image.png)
+
+
+## STEP 2 
+
+## SET THE docker-hub-credentials AS ENV IN JENKINS CREDENTIALS NOTE CREATE A ENV UNDER THE USER NAME AND PASSWORD USER NAME IS YOUR DOCKER HUB NAME AND ID IS docker-hub-credentials
+
+![alt text](image-1.png)
+
+
+## OUTPUT 
+
+![alt text](image-2.png)
+
+
+### if you have any doubt please feel free t contact me on linkdin 
