@@ -1,0 +1,61 @@
+pipeline {
+    agent any
+    tools {
+        jdk 'jdk17'
+        maven 'maven3'
+    }
+    environment {
+        SCANNER_HOME = tool 'SonarQube Scanner'
+    }
+
+    stages {
+        stage('Git-Checkout') {
+            steps {
+                git branch: 'main', credentialsId: 'github_jenkins_pipeline', url: 'https://github.com/jaiswaladi246/Ekart'
+            }
+        }
+        stage('Compile') {
+            steps {
+                sh "mvn clean compile -DskipTests=true"
+            }
+        }
+        stage('OWASP Scan') {
+            steps {
+                dependencyCheck additionalArguments: '--scan ./', odcInstallation: 'DP'
+                dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
+            }
+        }
+        stage('Sonarqube') {
+            steps {
+                withSonarQubeEnv('sonar-server') {
+                    sh '''
+                    $SCANNER_HOME/bin/sonar-scanner -Dsonar.projectName=Devops-CICD \
+                    -Dsonar.java.binaries=. \
+                    -Dsonar.projectKey=Devops-CICD
+                    '''
+                }
+            }
+        }
+        stage('Compile-Build') {
+            steps {
+                sh "mvn clean package -DskipTests=true"
+            }
+        }
+        stage('Docker-Build') {
+            steps {
+                withDockerRegistry(credentialsId: 'b1d6d812-83a2-44d6-b987-1d3c057d1a35', url: 'https://index.docker.io/v1/') {
+                   sh "docker build -t shopping-cart -f docker/Dockerfile ."
+                   sh "docker tag shopping-cart bharathikalai/shopping-cart:latest"
+                   sh "docker push bharathikalai/shopping-cart:latest"
+                }
+            }    
+        }
+        stage('Deploy') {
+            steps {
+                withDockerRegistry(credentialsId: 'b1d6d812-83a2-44d6-b987-1d3c057d1a35', url: 'https://index.docker.io/v1/') {
+                   sh "docker run -d --name shot-shop -p 8070:8070 bharathikalai/shopping-cart:latest"
+                }
+            }    
+        }
+    }
+}
