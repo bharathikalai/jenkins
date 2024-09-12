@@ -7,8 +7,6 @@ COPY . .
 # Install Flask
 RUN pip install Flask
 
-# Set environment variable
-ENV FLASK_APP=app.py
 
 EXPOSE 8066
 
