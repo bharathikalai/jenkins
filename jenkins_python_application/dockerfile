@@ -11,4 +11,4 @@ RUN pip install Flask
 EXPOSE 8066
 
 # Run the Flask app
-CMD ["python","app.py"]
+CMD ["python","jenkins_python_application/app.py"]
