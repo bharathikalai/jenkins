@@ -1,13 +1,10 @@
-import http.server
-import socketserver
+from flask import Flask
 
-# Define the port on which you want to serve (e.g., 8080)
-PORT = 8085
+app = Flask(__name__)
 
-# Handler for serving the directory
-Handler = http.server.SimpleHTTPRequestHandler
+@app.route('/')
+def hello_world():
+    return 'Hello, World!'
 
-# Set up the server
-with socketserver.TCPServer(("", PORT), Handler) as httpd:
-    print(f"Serving at port {PORT}")
-    httpd.serve_forever()
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=8080)

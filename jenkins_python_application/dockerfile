@@ -4,6 +4,10 @@ WORKDIR /app
 
 COPY . .
 
-EXPOSE 8087
+# Install Flask
+RUN pip install Flask
 
-CMD [ "python","main.py" ]
+EXPOSE 8080
+
+# Run the Flask app
+CMD ["flask", "run", "--host=0.0.0.0", "--port=8080"]
