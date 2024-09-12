@@ -1,0 +1,8 @@
+mkdir -p /var/lib/jenkins/.ssh
+touch /var/lib/jenkins/.ssh/known_hosts
+
+chown -R jenkins:jenkins /var/lib/jenkins/.ssh
+chmod 600 /var/lib/jenkins/.ssh/known_hosts
+
+ssh-keyscan -H 34.67.189.16 >> /var/lib/jenkins/.ssh/known_hosts
+
