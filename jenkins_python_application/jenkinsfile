@@ -1,0 +1,26 @@
+pipeline{
+    agent any
+    stages {
+        stage ('Git-Checkout') {
+            steps{
+                git branch: 'main', url: 'https://github.com/bharathikalai/jenkins'
+            }
+        }
+        stage('Docker-Build') {
+            steps {
+                withDockerRegistry(credentialsId: 'your_docker_env', url: 'https://index.docker.io/v1/') {
+                   sh "docker build -t pythonapp:latest -f jenkins_python_application/dockerfile ."
+                   sh "docker tag pythonapp bharathikalai/pythonapp:latest"
+                   sh "docker push bharathikalai/pythonapp:latest"
+                }
+            }    
+        }
+        stage('Docker-Run') {
+            steps {
+                withDockerRegistry(credentialsId: 'your_docker_env', url: 'https://index.docker.io/v1/') {
+                   sh "sudo docker run -d -p 8077:8066 pythonapp:latest"
+                }
+            }    
+        }
+    }
+}
