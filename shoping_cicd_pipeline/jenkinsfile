@@ -43,7 +43,7 @@ pipeline {
         }
         stage('Docker-Build') {
             steps {
-                withDockerRegistry(credentialsId: 'b1d6d812-83a2-44d6-b987-1d3c057d1a35', url: 'https://index.docker.io/v1/') {
+                withDockerRegistry(credentialsId: 'b1d6d812-83a2-44d6-b987-1da35', url: 'https://index.docker.io/v1/') {
                    sh "docker build -t shopping-cart -f docker/Dockerfile ."
                    sh "docker tag shopping-cart bharathikalai/shopping-cart:latest"
                    sh "docker push bharathikalai/shopping-cart:latest"
@@ -52,7 +52,7 @@ pipeline {
         }
         stage('Deploy') {
             steps {
-                withDockerRegistry(credentialsId: 'b1d6d812-83a2-44d6-b987-1d3c057d1a35', url: 'https://index.docker.io/v1/') {
+                withDockerRegistry(credentialsId: 'b1d6d812-83a2-44d6-b987-1dd1a35', url: 'https://index.docker.io/v1/') {
                    sh "docker run -d --name shot-shop -p 8070:8070 bharathikalai/shopping-cart:latest"
                 }
             }    
