@@ -1,0 +1,23 @@
+# Stage 1: Scan the base image
+FROM aquasec/trivy:latest AS trivy
+
+# Scan the Python base image
+RUN trivy image python:3.9-slim
+
+# Stage 2: Build your application image
+FROM python:3.9-slim
+
+# Set a working directory
+WORKDIR /app
+
+# Copy the current directory contents into the container
+COPY . /app
+
+# Install any needed packages specified in requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Make port 80 available to the world outside this container
+EXPOSE 80
+
+# Run app.py when the container launches
+CMD ["python", "app.py"]
