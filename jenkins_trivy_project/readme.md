@@ -54,10 +54,10 @@ trivy fs /path/to/directory
 ```
 
 
-### Git Repositories
+###  Repositories (GIT)
 
 ```
-trivy repo https://github.com/my-repo/my-project
+trivy repo --format table https://github.com/bharathikalai/Docker
 
 ```
 
@@ -83,5 +83,21 @@ trivy fs --vuln-type=os,library --format json -o report.json /path/to/requiremen
 
 ```
 trivy config -f kubernetes /path/to/kubernetes/manifests
+
+```
+
+
+## AWS
+
+```
+  # Scan your AWS AMI
+  $ trivy aws --service ec2
+
+  $ trivy aws --format json --output report.json 
+
+  $ trivy vm --scanners vuln ami:ami-022ce6f32988af5fa
+
+  # Scan your AWS EBS snapshot
+  $ trivy vm ebs:${your_ebs_snapshot_id}
 
 ```
