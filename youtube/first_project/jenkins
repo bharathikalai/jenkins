@@ -1,0 +1,39 @@
+pipeline {
+    agent any
+    
+    stages {
+        stage('Clone Code from GitHub') {
+            steps {
+                git branch: 'main', url: 'https://github.com/bharathikalai/Docker.git'
+            }
+        }
+
+        stage('Change Directory and Build Docker Image') {
+            steps {
+                dir('demo1') { // Ensure that 'dir' is used as a block
+                    sh 'docker build -t first_pipeline:${BUILD_NUMBER} .'
+                }
+            }
+        }
+
+        stage('Tag and Push Docker Image') {
+            steps {
+                withDockerRegistry(credentialsId: 'dockerhublogin', url: 'https://index.docker.io/v1/') {
+                sh 'docker tag first_pipeline:${BUILD_NUMBER} bharathikalai/first_pipeline:${BUILD_NUMBER}'
+                sh 'docker push bharathikalai/first_pipeline:${BUILD_NUMBER}'
+                }
+                    
+            }    
+        }
+        stage('pull the image from the docker hub and run the container in the local') {
+            steps {
+                withDockerRegistry(credentialsId: 'dockerhublogin', url: 'https://index.docker.io/v1/') {
+                sh 'docker stop jenkins-conatinor && docker rm jenkins-conatinor'
+                sh 'docker pull bharathikalai/first_pipeline:${BUILD_NUMBER}'
+                sh 'docker run -d -p 7000:7000 --name jenkins-conatinor  first_pipeline:${BUILD_NUMBER}'
+                }
+                    
+            }    
+        }
+    }
+}
