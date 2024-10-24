@@ -1,0 +1,75 @@
+pipeline {
+    agent any
+
+     environment {
+        projectKey = 'first-analysis'         // Replace with your project key
+        projectName = 'first-analysis'        // Replace with your project name
+        projectVersion = '1.0'                   // Replace with your project version
+    }
+    
+    stages {
+        stage('Clone Code from GitHub') {
+            steps {
+                git branch: 'main', url: 'https://github.com/bharathikalai/Docker.git'
+            }
+        }
+
+        stage('Change Directory and Build Docker Image') {
+            steps {
+                dir('demo1') { // Ensure that 'dir' is used as a block
+                    sh 'docker build -t first_pipeline:${BUILD_NUMBER} .'
+                }
+            }
+        }
+        stage('Trivy-scanner') {
+            steps {
+                script {
+                def reportFile = "trivy-report-${BUILD_NUMBER}.txt"
+                    // Run the Trivy scan and save the output to the report file
+                sh "trivy image --severity HIGH,CRITICAL --output ${reportFile} first_pipeline:${BUILD_NUMBER}"
+                    // Archive the report file
+                archiveArtifacts artifacts: reportFile, fingerprint: true
+                }
+            }
+        }
+
+        stage('Sonarcube-scanner') {
+            steps {
+                withSonarQubeEnv('My SonarQube Server') { // Use the configured SonarQube server
+                        sh '''
+                        sonar-scanner \
+                            -Dsonar.projectKey=${projectKey} \
+                            -Dsonar.projectName=${projectName} \
+                            -Dsonar.projectVersion=${projectVersion} \
+                            -Dsonar.sources=. \
+                            -Dsonar.login=${SONAR_TOKEN} // Optional if token is configured in Jenkins
+                        '''
+                    }
+            }
+        }
+
+        stage('Tag and Push Docker Image') {
+            steps {
+                withDockerRegistry(credentialsId: 'dockerhublogin', url: 'https://index.docker.io/v1/') {
+                sh 'docker tag first_pipeline:${BUILD_NUMBER} bharathikalai/first_pipeline:${BUILD_NUMBER}'
+                sh 'docker push bharathikalai/first_pipeline:${BUILD_NUMBER}'
+                }
+                    
+            }    
+        }
+        stage('pull the image from the docker hub and run the container in the local') {
+            steps {
+                withDockerRegistry(credentialsId: 'dockerhublogin', url: 'https://index.docker.io/v1/') {
+                sh 'docker stop jenkins-conatinor && docker rm jenkins-conatinor'
+                sh 'docker pull bharathikalai/first_pipeline:${BUILD_NUMBER}'
+                sh 'docker run -d -p 7000:7000 --name jenkins-conatinor  first_pipeline:${BUILD_NUMBER}'
+                }
+                    
+            }    
+        }
+    }
+}
+
+
+
+// trivy --no-progress --exit-code 1 --severity HIGH,CRITICAL your_docker_image
