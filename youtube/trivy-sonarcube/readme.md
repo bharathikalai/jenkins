@@ -13,11 +13,14 @@ docker run -d \
 # Trivy installation
 
 ```
-wget https://raw.githubusercontent.com/aquasecurity/trivy/main/install.sh
-chmod +x install.sh
-sudo ./install.sh
+wget https://github.com/aquasecurity/trivy/releases/download/v0.18.3/trivy_0.18.3_Linux-64bit.deb
+sudo dpkg -i trivy_0.18.3_Linux-64bit.deb
 ```
+# Trivy installation other os
 
+```
+https://aquasecurity.github.io/trivy/v0.18.3/installation/
+```
 
 
 ## install java
