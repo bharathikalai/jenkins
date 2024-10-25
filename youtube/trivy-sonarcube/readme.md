@@ -13,13 +13,23 @@ docker run -d \
 # Trivy installation
 
 ```
-wget https://github.com/aquasecurity/trivy/releases/download/v0.18.3/trivy_0.18.3_Linux-64bit.deb
-sudo dpkg -i trivy_0.18.3_Linux-64bit.deb
-```
-# Trivy installation other os
+### Install trivy in your local
 
 ```
-https://aquasecurity.github.io/trivy/v0.18.3/installation/
+# Download the Trivy Debian package
+wget https://github.com/aquasecurity/trivy/releases/download/v0.45.0/trivy_0.45.0_Linux-64bit.deb
+
+# Install the downloaded package
+sudo dpkg -i trivy_0.45.0_Linux-64bit.deb
+
+# Fix any missing dependencies
+sudo apt-get install -f
+```
+
+### Check the trivy version
+
+```
+trivy --version
 ```
 
 
