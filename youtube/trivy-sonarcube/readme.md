@@ -1,4 +1,15 @@
-# sonnar-scanner installation
+# sonnarqube installation using docker 
+
+## Command 
+
+```
+docker run -d \
+  --restart unless-stopped \
+  -p 9000:9000 \
+  --name sonar-qube \
+  sonarqube:community
+  
+  ```
 
 ## install java
 
@@ -9,7 +20,7 @@ java -version
 
 ```
 
-## Sonarqube installation in ubuntu
+## Sonarscanner installation in ubuntu
 
 ```
 mkdir sonar-installation
