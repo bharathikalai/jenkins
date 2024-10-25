@@ -10,6 +10,15 @@ docker run -d \
   sonarqube:community
   
   ```
+# Trivy installation
+
+```
+wget https://raw.githubusercontent.com/aquasecurity/trivy/main/install.sh
+chmod +x install.sh
+sudo ./install.sh
+```
+
+
 
 ## install java
 
