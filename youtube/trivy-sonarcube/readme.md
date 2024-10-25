@@ -12,7 +12,6 @@ docker run -d \
   ```
 # Trivy installation
 
-```
 ### Install trivy in your local
 
 ```
