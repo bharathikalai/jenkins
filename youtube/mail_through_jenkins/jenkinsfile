@@ -1,0 +1,37 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Build') {
+            steps {
+                // Your build steps here
+                echo 'Building...'
+                sh 'exit 1'
+            }
+        }
+
+        stage('Test') {
+            steps {
+                // Your test steps here
+                echo 'Testing...'
+            }
+        }
+    }
+
+    post {
+        success {
+            emailext (
+                subject: "SUCCESS: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
+                body: "The build was successful. Check the build at ${env.BUILD_URL}.",
+                to: 'recipient@example.com'
+            )
+        }
+        failure {
+            emailext (
+                subject: "FAILURE: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
+                body: "The build has failed. Please check the logs at ${env.BUILD_URL}.",
+                to: 'recipient@example.com'
+            )
+        }
+    }
+}
