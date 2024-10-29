@@ -1,0 +1,73 @@
+pipeline {
+    agent any
+    environment {
+        MY_VAR = 'my_value'
+        ANOTHER_VAR = 'another_value'
+    }
+    stages {
+        stage('Example') {
+            steps {
+                echo "MY_VAR is ${env.MY_VAR}"
+            }
+        }
+    }
+}
+
+
+node {
+    stage('Example') {
+        withEnv(['MY_VAR=my_value', 'ANOTHER_VAR=another_value']) {
+            sh 'echo $MY_VAR'
+        }
+    }
+}
+
+
+
+
+pipeline {
+    agent any
+    environment {
+        MY_SECRET = credentials('my-secret-id')
+    }
+    stages {
+        stage('Use Secret') {
+            steps {
+                sh 'echo $MY_SECRET'
+            }
+        }
+    }
+}
+
+
+
+pipeline {
+    agent any
+    stages {
+        stage('Shell Variables') {
+            steps {
+                sh '''
+                export MY_VAR="my_value"
+                echo "MY_VAR is $MY_VAR"
+                '''
+            }
+        }
+    }
+}
+
+
+
+def props = readProperties file: 'env.properties'
+pipeline {
+    agent any
+    environment {
+        MY_VAR = props['MY_VAR']
+    }
+    stages {
+        stage('Example') {
+            steps {
+                echo "MY_VAR is ${env.MY_VAR}"
+            }
+        }
+    }
+}
